@@ -1,12 +1,21 @@
 'use client';
 
-import { SignInButton, UserButton, useAuth } from '@clerk/nextjs';
+import { SignInButton, UserButton, useAuth, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 export function Navbar() {
     const pathname = usePathname();
     const { isLoaded, isSignedIn } = useAuth();
+    const { isLoaded: userLoaded, user } = useUser();
+    const email = user?.primaryEmailAddress?.emailAddress?.trim().toLowerCase();
+    const adminEmails = (process.env.NEXT_PUBLIC_ADMINEMAILS ?? '')
+        .split(',')
+        .map((adminEmail) => adminEmail.trim().toLowerCase())
+        .filter(Boolean);
+    const canAccessAdmin = Boolean(
+        isLoaded && isSignedIn && userLoaded && email && adminEmails.includes(email),
+    );
 
     return (
         <header className="border-b-2 border-black bg-[#fffdf7]">
@@ -34,16 +43,18 @@ export function Navbar() {
                     >
                         Standings
                     </Link>
-                    <Link
-                        href="/admin"
-                        className={
-                            pathname === '/admin'
-                                ? 'border-2 border-black bg-[#9fc9ff] px-2 py-2 text-black sm:px-3'
-                                : 'border-2 border-transparent px-2 py-2 text-zinc-600 hover:border-black hover:bg-white sm:px-3'
-                        }
-                    >
-                        Admin Panel
-                    </Link>
+                    {canAccessAdmin ? (
+                        <Link
+                            href="/admin"
+                            className={
+                                pathname === '/admin'
+                                    ? 'border-2 border-black bg-[#9fc9ff] px-2 py-2 text-black sm:px-3'
+                                    : 'border-2 border-transparent px-2 py-2 text-zinc-600 hover:border-black hover:bg-white sm:px-3'
+                            }
+                        >
+                            Admin Panel
+                        </Link>
+                    ) : null}
                 </nav>
 
                 <div className="flex shrink-0 items-center gap-2">
