@@ -9,8 +9,8 @@ const organizers = [
 
 export function SiteFooter() {
     return (
-        <footer className="mt-16 border-t-2 border-black bg-[#fffdf7]">
-            <div className="mx-auto grid max-w-screen-2xl gap-8 px-4 py-8 sm:px-6 md:grid-cols-[1fr_auto] md:items-end lg:px-10">
+        <footer className="mt-auto border-t-2 border-black bg-[#fffdf7]">
+            <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-8 sm:px-6 md:grid-cols-[1fr_auto] md:items-end lg:px-8">
                 <div>
                     <div className="text-xs font-black uppercase tracking-[0.2em] text-zinc-500">
                         Presented by

@@ -2,8 +2,8 @@ import Link from 'next/link';
 
 export default function HomePage() {
     return (
-        <main className="overflow-hidden">
-            <section className="relative mx-auto grid min-h-[calc(100svh-73px)] max-w-screen-2xl items-center gap-10 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16 lg:px-10 lg:py-20">
+        <main className="flex flex-1 flex-col overflow-hidden">
+            <section className="relative mx-auto grid min-h-[560px] w-full max-w-screen-2xl flex-1 items-center gap-10 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16 lg:px-10 lg:py-20">
                 <div className="relative z-10 max-w-4xl">
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-black uppercase tracking-[0.2em] sm:text-sm">
                         <span className="border-2 border-black bg-[#d8ff3e] px-2 py-1">

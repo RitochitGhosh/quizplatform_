@@ -28,9 +28,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
             <body className="min-h-full text-zinc-900">
                 <Providers>
-                    <div className="min-h-screen">
+                    <div className="flex min-h-screen flex-col">
                         <Navbar />
-                        {children}
+                        <div className="flex flex-1 flex-col">{children}</div>
                         <SiteFooter />
                     </div>
                 </Providers>

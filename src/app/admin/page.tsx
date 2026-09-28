@@ -52,7 +52,7 @@ export default function AdminPage() {
     }
 
     return (
-        <main className="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6 sm:py-10 lg:px-10">
+        <main className="mx-auto w-full max-w-screen-2xl flex-1 px-4 py-8 sm:px-6 sm:py-10 lg:px-10">
             <div className="mb-8 flex items-end justify-between gap-4">
                 <div>
                     <div className="inline-block border-2 border-black bg-[#ff9e91] px-2 py-1 text-[10px] font-black uppercase">

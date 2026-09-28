@@ -39,7 +39,7 @@ export default function StandingsPage() {
     }
 
     return (
-        <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
             <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
                 <div>
                     <div className="inline-block border-2 border-black bg-[#9fc9ff] px-2 py-1 text-[10px] font-black uppercase">
