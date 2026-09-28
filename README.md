@@ -36,6 +36,7 @@ The email `imrito18@gmail.com` receives scorer/admin access. Other authenticated
 1. Create a Clerk app.
 2. Copy the publishable and secret keys to `.env.local`.
 3. Activate the Convex integration in Clerk and copy the Clerk Frontend API URL into `CLERK_FRONTEND_API_URL`.
+4. Create a Clerk JWT template named `convex` (the Convex provider requests this template), set its audience to `convex` to match `applicationID` in `convex/auth.config.ts`, and add an `email` claim mapped to `{{user.primary_email_address}}`.
 
 ## Convex setup
 
@@ -60,6 +61,7 @@ Deploy Convex first so its schema and functions exist before the Vercel app uses
     ```
 3. In the Convex dashboard, open the production deployment settings and copy its deployment URL and HTTP actions URL. These are production values, not `http://127.0.0.1:3210` / `3211`.
 4. Link the Next.js project to Vercel, then add these variables to the Vercel **Production** environment: `NEXT_PUBLIC_CONVEX_URL`, `NEXT_PUBLIC_CONVEX_SITE_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, and `NEXT_PUBLIC_ADMINEMAILS`. Use the two URLs from the production Convex deployment and the production Clerk API keys. Never use a `NEXT_PUBLIC_` prefix for a secret.
+   Confirm `NEXT_PUBLIC_CONVEX_URL` belongs to the same production deployment configured in the Convex dashboard, and that the Vercel Clerk app matches the provider configured there. The server-side `ADMINEMAILS` must also be set on that production Convex deployment.
 5. Verify the production build locally and deploy:
 
     ```bash

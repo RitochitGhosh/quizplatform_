@@ -21,6 +21,7 @@ export function TeamScoreControls({ team }: { team: Team }) {
     const [note, setNote] = useState('');
     const [error, setError] = useState('');
     const [pending, setPending] = useState(false);
+    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const [manualPoints, setManualPoints] = useState('');
     const [manualScoreDraft, setManualScoreDraft] = useState<string | null>(null);
     const manualScore = manualScoreDraft ?? String(team.score);
@@ -96,15 +97,11 @@ export function TeamScoreControls({ team }: { team: Team }) {
     }
 
     async function handleDelete() {
-        const confirmed = window.confirm(
-            `Delete ${team.name} and its complete score history? This cannot be undone.`,
-        );
-        if (!confirmed) return;
-
         setError('');
         try {
             setPending(true);
             await deleteTeam({ teamId: team._id });
+            setDeleteConfirmationOpen(false);
         } catch (deleteError) {
             setError(deleteError instanceof Error ? deleteError.message : 'Unable to delete team.');
         } finally {
@@ -139,7 +136,10 @@ export function TeamScoreControls({ team }: { team: Team }) {
                 </span>
                 <button
                     type="button"
-                    onClick={() => void handleDelete()}
+                    onClick={() => {
+                        setError('');
+                        setDeleteConfirmationOpen(true);
+                    }}
                     disabled={pending}
                     className="border-2 border-black bg-[#ff9e91] px-2 py-1 text-[10px] font-black uppercase text-black hover:bg-[#ff8170] disabled:opacity-50"
                 >
@@ -226,6 +226,68 @@ export function TeamScoreControls({ team }: { team: Team }) {
             </div>
 
             {error ? <div className="mt-4 text-sm text-red-600">{error}</div> : null}
+
+            {deleteConfirmationOpen ? (
+                <div
+                    className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4"
+                    onMouseDown={(event) => {
+                        if (event.target === event.currentTarget && !pending) {
+                            setDeleteConfirmationOpen(false);
+                        }
+                    }}
+                    onKeyDown={(event) => {
+                        if (event.key === 'Escape' && !pending) {
+                            setDeleteConfirmationOpen(false);
+                        }
+                    }}
+                >
+                    <div
+                        role="alertdialog"
+                        aria-modal="true"
+                        aria-labelledby={`delete-team-title-${team._id}`}
+                        aria-describedby={`delete-team-description-${team._id}`}
+                        className="w-full max-w-md border-2 border-black bg-[#fffdf7] p-6 shadow-[6px_6px_0_#171714]"
+                    >
+                        <h2
+                            id={`delete-team-title-${team._id}`}
+                            className="text-xl font-black uppercase"
+                        >
+                            Delete {team.name}?
+                        </h2>
+                        <p
+                            id={`delete-team-description-${team._id}`}
+                            className="mt-3 text-sm leading-relaxed text-zinc-700"
+                        >
+                            This permanently removes the team and its complete score history. This
+                            action cannot be undone.
+                        </p>
+                        {error ? (
+                            <p role="alert" className="mt-3 text-sm font-medium text-red-700">
+                                {error}
+                            </p>
+                        ) : null}
+                        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                            <button
+                                type="button"
+                                autoFocus
+                                onClick={() => setDeleteConfirmationOpen(false)}
+                                disabled={pending}
+                                className="brutal-button min-h-11 border-2 border-black bg-white px-4 py-2 text-sm font-black uppercase disabled:opacity-60"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => void handleDelete()}
+                                disabled={pending}
+                                className="brutal-button min-h-11 border-2 border-black bg-[#ff9e91] px-4 py-2 text-sm font-black uppercase disabled:opacity-60"
+                            >
+                                {pending ? 'Deleting...' : 'Delete team'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            ) : null}
         </div>
     );
 }

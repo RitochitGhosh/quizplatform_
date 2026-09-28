@@ -5,13 +5,20 @@ import { ConvexReactClient } from 'convex/react';
 import { ConvexProviderWithClerk } from 'convex/react-clerk';
 import type { ReactNode } from 'react';
 
-const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL ?? 'http://127.0.0.1:3210');
+const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
+const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+if (!convexUrl || !clerkPublishableKey) {
+    throw new Error(
+        'Set NEXT_PUBLIC_CONVEX_URL and NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY before starting the app.',
+    );
+}
+
+const convex = new ConvexReactClient(convexUrl);
 
 export function Providers({ children }: { children: ReactNode }) {
     return (
-        <ClerkProvider
-            publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ?? 'pk_test_example'}
-        >
+        <ClerkProvider publishableKey={clerkPublishableKey}>
             <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
                 {children}
             </ConvexProviderWithClerk>
