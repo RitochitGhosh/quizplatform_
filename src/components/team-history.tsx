@@ -87,7 +87,7 @@ export function TeamHistory({ team, events }: { team: TeamRecord | null; events:
                                     ? `SCORE EDIT ${event.points > 0 ? '+' : ''}${event.points}`
                                     : event.type === 'initial'
                                       ? `START +${event.points}`
-                                      : `+${event.points} POINTS`;
+                                      : `${event.points > 0 ? '+' : ''}${event.points} POINTS`;
 
                             return (
                                 <article key={event._id} className="relative pl-9">
@@ -103,7 +103,7 @@ export function TeamHistory({ team, events }: { team: TeamRecord | null; events:
                                                     {label}
                                                 </div>
                                                 <p className="mt-3 text-sm font-semibold leading-relaxed text-zinc-800">
-                                                    {event.note}
+                                                    {event.note || 'No note provided.'}
                                                 </p>
                                             </div>
                                             <div className="border-2 border-black bg-[#f4f1e8] px-2 py-1 text-xs font-black tabular-nums text-zinc-900">

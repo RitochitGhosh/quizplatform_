@@ -1,5 +1,6 @@
 'use client';
 
+import { getConvexErrorMessage } from '@/lib/convex-error';
 import { useMutation } from 'convex/react';
 import { useState } from 'react';
 import { api } from '../../convex/_generated/api';
@@ -29,10 +30,6 @@ export function TeamScoreControls({ team }: { team: Team }) {
     async function handleScore(points: number) {
         setError('');
         const nextNote = note.trim();
-        if (!nextNote) {
-            setError('Score note is required.');
-            return;
-        }
 
         try {
             setPending(true);
@@ -40,7 +37,7 @@ export function TeamScoreControls({ team }: { team: Team }) {
             setNote('');
             setManualScoreDraft(null);
         } catch (submitError) {
-            setError(submitError instanceof Error ? submitError.message : 'Unable to add points.');
+            setError(getConvexErrorMessage(submitError, 'Unable to add points.'));
         } finally {
             setPending(false);
         }
@@ -49,10 +46,6 @@ export function TeamScoreControls({ team }: { team: Team }) {
     async function handleCorrection() {
         setError('');
         const trimmedNote = note.trim();
-        if (!trimmedNote) {
-            setError('Score note is required.');
-            return;
-        }
 
         const value = Number(manualScore);
         if (Number.isNaN(value) || value < 0) {
@@ -66,7 +59,7 @@ export function TeamScoreControls({ team }: { team: Team }) {
             setNote('');
             setManualScoreDraft(null);
         } catch (submitError) {
-            setError(submitError instanceof Error ? submitError.message : 'Unable to edit score.');
+            setError(getConvexErrorMessage(submitError, 'Unable to edit score.'));
         } finally {
             setPending(false);
         }
@@ -79,18 +72,13 @@ export function TeamScoreControls({ team }: { team: Team }) {
             setError('Enter a whole number from 1 to 10000.');
             return;
         }
-        if (!note.trim()) {
-            setError('Score note is required.');
-            return;
-        }
-
         try {
             setPending(true);
             await addManualPoints({ teamId: team._id, points, note: note.trim() });
             setNote('');
             setManualPoints('');
         } catch (submitError) {
-            setError(submitError instanceof Error ? submitError.message : 'Unable to add points.');
+            setError(getConvexErrorMessage(submitError, 'Unable to add points.'));
         } finally {
             setPending(false);
         }
@@ -103,7 +91,7 @@ export function TeamScoreControls({ team }: { team: Team }) {
             await deleteTeam({ teamId: team._id });
             setDeleteConfirmationOpen(false);
         } catch (deleteError) {
-            setError(deleteError instanceof Error ? deleteError.message : 'Unable to delete team.');
+            setError(getConvexErrorMessage(deleteError, 'Unable to delete team.'));
         } finally {
             setPending(false);
         }
@@ -150,7 +138,7 @@ export function TeamScoreControls({ team }: { team: Team }) {
             <div className="flex flex-1 flex-col gap-5">
                 <div>
                     <label className="mb-1 block text-sm font-medium text-zinc-700">
-                        Scoring Note
+                        Scoring Note (optional)
                     </label>
                     <input
                         value={note}
@@ -161,15 +149,15 @@ export function TeamScoreControls({ team }: { team: Team }) {
                 </div>
 
                 <div className="grid grid-cols-3 gap-3">
-                    {[5, 10, 15].map((points) => (
+                    {[5, 10, -5].map((points) => (
                         <button
                             key={points}
                             type="button"
                             onClick={() => void handleScore(points)}
                             disabled={pending}
-                            className="brutal-button min-h-12 bg-[#d8ff3e] px-2 py-3 text-base font-black text-black disabled:cursor-not-allowed disabled:opacity-60"
+                            className={`brutal-button min-h-12 px-2 py-3 text-base font-black text-black disabled:cursor-not-allowed disabled:opacity-60 ${points < 0 ? 'bg-[#ff9e91]' : 'bg-[#d8ff3e]'}`}
                         >
-                            +{points}
+                            {points > 0 ? `+${points}` : points}
                         </button>
                     ))}
                 </div>

@@ -1,4 +1,4 @@
-import { v } from 'convex/values';
+import { ConvexError, v } from 'convex/values';
 import { mutation, query } from './_generated/server';
 import { requireAdmin } from './auth';
 
@@ -28,21 +28,21 @@ export const createTeam = mutation({
 
         const name = args.name.trim();
         if (!name) {
-            throw new Error('Team name is required.');
+            throw new ConvexError('Team name is required.');
         }
 
         if (args.members.length !== 2) {
-            throw new Error('Each team must have exactly 2 members.');
+            throw new ConvexError('Each team must have exactly 2 members.');
         }
 
         const initialScore = args.initialScore ?? 0;
         if (!Number.isInteger(initialScore) || initialScore < 0) {
-            throw new Error('Starting score must be a non-negative whole number.');
+            throw new ConvexError('Starting score must be a non-negative whole number.');
         }
 
         const memberNames = args.members.map((member) => member.name.trim());
         if (memberNames.some((memberName) => !memberName)) {
-            throw new Error('Both team members must have a name.');
+            throw new ConvexError('Both team members must have a name.');
         }
 
         const normalizedName = name.toLowerCase();
@@ -52,7 +52,7 @@ export const createTeam = mutation({
         );
 
         if (duplicateName) {
-            throw new Error('A team with this name already exists.');
+            throw new ConvexError('A team with this name already exists.');
         }
 
         const now = Date.now();
@@ -115,21 +115,21 @@ export const addPoints = mutation({
             throw new Error('Team not found.');
         }
 
-        const allowedPoints = [5, 10, 15];
+        const allowedPoints = [5, 10, -5];
         if (!allowedPoints.includes(args.points)) {
-            throw new Error('Invalid score increment');
+            throw new ConvexError('Choose a preset adjustment of +5, +10, or -5.');
         }
 
         const trimmedNote = args.note.trim();
-        if (!trimmedNote) {
-            throw new Error('Score note is required.');
-        }
         if (trimmedNote.length > 200) {
             throw new Error('Score note is too long.');
         }
 
         const previousScore = team.score;
         const newScore = previousScore + args.points;
+        if (newScore < 0) {
+            throw new ConvexError('A team score cannot go below zero.');
+        }
         const now = Date.now();
 
         await ctx.db.patch(args.teamId, {
@@ -169,8 +169,8 @@ export const addManualPoints = mutation({
         }
 
         const note = args.note.trim();
-        if (!note || note.length > 200) {
-            throw new Error('Enter a note of 1 to 200 characters.');
+        if (note.length > 200) {
+            throw new Error('Score note must be 200 characters or fewer.');
         }
 
         const previousScore = team.score;
@@ -206,9 +206,6 @@ export const setScore = mutation({
         }
 
         const trimmedNote = args.note.trim();
-        if (!trimmedNote) {
-            throw new Error('Score note is required.');
-        }
         if (trimmedNote.length > 200) {
             throw new Error('Score note is too long.');
         }

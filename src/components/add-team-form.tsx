@@ -1,5 +1,6 @@
 'use client';
 
+import { getConvexErrorMessage } from '@/lib/convex-error';
 import { useMutation } from 'convex/react';
 import { useState, type FormEvent } from 'react';
 import { api } from '../../convex/_generated/api';
@@ -34,9 +35,7 @@ export function AddTeamForm() {
             setMemberTwo('');
             setInitialScore('0');
         } catch (submitError) {
-            const message =
-                submitError instanceof Error ? submitError.message : 'Unable to add team.';
-            setError(message);
+            setError(getConvexErrorMessage(submitError, 'Unable to add team.'));
         } finally {
             setIsSubmitting(false);
         }

@@ -1,3 +1,4 @@
+import { ConvexError } from 'convex/values';
 import type { MutationCtx, QueryCtx } from './_generated/server';
 
 export function parseAdminEmails(raw: string | undefined): string[] {
@@ -14,20 +15,20 @@ export async function requireAdmin(ctx: QueryCtx | MutationCtx): Promise<{
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-        throw new Error('Unauthenticated');
+        throw new ConvexError('Please sign in before making this change.');
     }
 
     const email = identity.email?.trim().toLowerCase();
     const admins = parseAdminEmails(process.env.ADMINEMAILS);
 
     if (!email) {
-        throw new Error(
-            'Clerk identity has no email claim. Add an email claim to the Clerk Convex session token.',
+        throw new ConvexError(
+            'Your sign-in token is missing an email address. Check the Clerk Convex JWT template.',
         );
     }
 
     if (!admins.includes(email)) {
-        throw new Error('Unauthorized');
+        throw new ConvexError('Your account does not have permission to manage teams.');
     }
 
     return { identity, email };
