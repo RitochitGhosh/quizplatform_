@@ -1,26 +1,79 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    --background: #f4f1e8;
+    --foreground: #171714;
+    --ink: #171714;
+    --paper: #fffdf7;
+    --lime: #d8ff3e;
+    --blue: #9fc9ff;
+    --pink: #ff9e91;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+    background-image: radial-gradient(#17171418 0.8px, transparent 0.8px);
+    background-size: 18px 18px;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+::selection {
+    background: var(--lime);
+    color: var(--ink);
+}
+
+:focus-visible {
+    outline: 3px solid #2667ff;
+    outline-offset: 3px;
+}
+
+.brutal-panel {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    box-shadow: 5px 5px 0 var(--ink);
+}
+
+.brutal-input {
+    border: 2px solid var(--ink);
+    background: #fff;
+    box-shadow: 2px 2px 0 var(--ink);
+}
+
+.brutal-button {
+    border: 2px solid var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+    transition:
+        transform 120ms ease,
+        box-shadow 120ms ease;
+}
+
+.brutal-button:hover:not(:disabled) {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--ink);
+}
+
+.brutal-button:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 var(--ink);
 }
